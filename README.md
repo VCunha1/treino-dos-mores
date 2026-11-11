@@ -11,7 +11,7 @@ com isolamento total de dados.
 | Fase | Escopo | Estado |
 |---|---|---|
 | 1 | Fundação: auth, perfis, casal/convite, RLS, layout e identidade visual | **Concluída** |
-| 2 | Biblioteca de exercícios e planejamento | Pendente |
+| 2 | Biblioteca de exercícios e planejamento | **Concluída** |
 | 3 | Treino individual | Pendente |
 | 4 | Treinar Juntos (Realtime) | Pendente |
 | 5 | Evolução e estatísticas | Pendente |
@@ -28,6 +28,15 @@ com isolamento total de dados.
 - Migrations versionadas com RLS e testes que rodam as políticas reais
 - Layout mobile-first com navegação inferior e a paleta da marca
 - Tela `/setup` clara quando as variáveis do Supabase não estão configuradas
+
+### O que a Fase 2 entrega
+
+- Biblioteca com 63 exercícios do sistema (12 grupos musculares), busca e filtro, e exercícios personalizados
+- Planos de treino: criar (ABC, ABCD, ABCDE, Upper/Lower, Push/Pull/Legs, Full Body, personalizada), editar,
+  duplicar, arquivar, compartilhar (leitura) e excluir com confirmação
+- Dias de treino (renomear, dia da semana, foco, reordenar) e exercícios por dia (séries, repetições, carga inicial,
+  descanso, técnica especial, objetivo, observações, reordenar)
+- O administrador do casal cria e edita os planos da parceira, sem acesso aos dados privados dela
 
 ## Tecnologias
 

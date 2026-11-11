@@ -52,7 +52,18 @@ export async function signUp(_prev: ActionState, formData: FormData): Promise<Ac
   });
 
   if (error) {
+    // Registra só o código e a mensagem do Supabase (nunca a senha) para facilitar o diagnóstico.
+    console.error("[signUp] falhou:", error.code, error.message);
     if (error.code === "weak_password") return { fieldErrors: { password: "Senha muito fraca. Escolha outra." } };
+    if (error.code === "user_already_exists" || error.code === "email_exists") {
+      return { error: "Já existe uma conta com esse e-mail. Tente entrar." };
+    }
+    if (error.code === "over_email_send_rate_limit") {
+      return { error: "Muitos e-mails enviados em pouco tempo. Aguarde alguns minutos e tente de novo." };
+    }
+    if (error.code === "signup_disabled") {
+      return { error: "Novos cadastros estão desativados neste projeto." };
+    }
     return { error: "Não foi possível criar a conta. Verifique os dados e tente novamente." };
   }
 

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Bot, Dumbbell, HeartPulse, Users } from "lucide-react";
+import { Bot, ClipboardList, Dumbbell, HeartPulse, Users } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { getCoupleContext, getProfile } from "@/services/session";
@@ -13,7 +13,7 @@ function greeting(hour: number) {
 }
 
 const upcoming = [
-  { icon: Dumbbell, title: "Meu treino de hoje", phase: "Fase 2" },
+  { icon: Dumbbell, title: "Treino em andamento", phase: "Fase 3" },
   { icon: Users, title: "Treinar juntos", phase: "Fase 4" },
   { icon: Bot, title: "AI Coach", phase: "Fase 7" },
   { icon: HeartPulse, title: "Cycle Sync", phase: "Fase 8" },
@@ -72,6 +72,13 @@ export default async function DashboardPage() {
           )}
         </Card>
       )}
+
+      <Link
+        href="/treinos"
+        className="flex h-14 items-center justify-center gap-2 rounded-xl bg-brand text-lg font-semibold text-bg transition active:scale-[0.98]"
+      >
+        <ClipboardList className="h-6 w-6" aria-hidden /> Meus treinos
+      </Link>
 
       <section aria-labelledby="soon" className="space-y-3">
         <h2 id="soon" className="text-xs font-semibold uppercase tracking-wider text-ink-muted">

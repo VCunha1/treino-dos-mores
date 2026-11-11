@@ -38,6 +38,32 @@ Observações:
   uso único, revogável pelo admin. Não é possível aceitar o próprio convite.
 - Sair do casal remove o vínculo; quem fica vira admin; se ninguém fica, o casal é apagado.
 
+## Treinos e biblioteca (Fase 2)
+
+Fonte: `supabase/migrations/20261109000003_workout_plans.sql`. Testes: `tests/plans.test.ts`.
+
+| Tabela | Dono do plano | Admin do casal | Parceira (plano do admin) | Estranho / outro casal |
+|---|---|---|---|---|
+| `workout_plans` | CRUD (menos `owner_id`/`created_by`) | CRUD nos planos **da parceira** | **lê** só se `is_shared = true`; não edita | nada |
+| `workout_plan_days` | CRUD | CRUD nos da parceira | lê se o plano é compartilhado | nada |
+| `workout_plan_exercises` | CRUD | CRUD nos da parceira | lê se o plano é compartilhado | nada |
+| `exercises` (sistema, `owner_id` nulo) | lê | lê | lê | lê |
+| `exercises` (personalizados) | CRUD do próprio | lê os do casal | lê os do casal | nada |
+
+Regras:
+
+- `manages_user(owner)` é a regra central: verdadeira para o próprio dono **ou** para o admin do casal em que o dono está.
+  A parceira **não** gerencia o plano do admin.
+- Criar plano passa por `create_workout_plan` (o banco confere se o chamador pode criar para aquele dono).
+  Não há `INSERT` direto em `workout_plans`.
+- `owner_id` e `created_by` não são atualizáveis: ninguém "toma" o plano de outra pessoa.
+- Duplicar (`duplicate_workout_plan`): quem gerencia o dono mantém o dono; quem só pode ver (plano compartilhado)
+  recebe a cópia como dona, podendo editá-la.
+- Um item de plano só aceita exercícios que o usuário consegue enxergar.
+- Exercícios do sistema só mudam por migration. Exercício em uso por um plano não pode ser apagado (`on delete restrict`).
+- **Gerenciar o treino da parceira não concede acesso a `profile_details`, preferências, saúde ou Cycle Sync.**
+  Essas tabelas não usam `manages_user()` e seguem privadas (há teste cobrindo isso).
+
 ## Decisões de segurança tomadas
 
 - **Aleatoriedade do convite** vem de `gen_random_uuid()` (nativo). Evitei `pgcrypto` porque no
@@ -46,6 +72,7 @@ Observações:
   perfil (visível ao casal). Se preferir foto privada, troque para bucket privado + URLs assinadas.
 - **Novas tabelas precisam de `GRANT` explícito.** A migration revoga os privilégios padrão; toda
   migration futura deve conceder somente o necessário a `authenticated` junto com as políticas RLS.
+- **Plano compartilhado é somente leitura.** O admin sempre enxerga e gerencia os planos da parceira; só o plano do admin precisa ser marcado como compartilhado para a parceira vê-lo.
 - **Dados de saúde/Cycle Sync (Fase 8)** não existem ainda. Quando forem criados, devem seguir o mesmo
   padrão de `profile_details`: privados por padrão, com compartilhamento por categoria validado no banco.
 
