@@ -522,7 +522,7 @@ export function WorkoutRunner({ session, exercises, defaultRestSeconds, soundEna
                           ) : null}
                         </div>
 
-                        <div className="grid grid-cols-[1fr_1fr_auto] items-end gap-2">
+                        <div className="grid grid-cols-[2fr_3fr] items-end gap-3">
                           <label className="space-y-1">
                             <span className="text-[11px] font-medium text-ink-muted">Reps (meta {ex.plannedReps})</span>
                             <input
@@ -537,11 +537,11 @@ export function WorkoutRunner({ session, exercises, defaultRestSeconds, soundEna
                           </label>
                           <div className="space-y-1">
                             <span className="text-[11px] font-medium text-ink-muted">Carga (kg)</span>
-                            <div className="flex items-center gap-1">
+                            <div className="flex items-center gap-1.5">
                               <button
                                 type="button"
                                 onClick={() => patchSet(ex.id, s.id, { load: stepLoad(s.load, -2.5) })}
-                                className="flex h-14 w-9 shrink-0 items-center justify-center rounded-xl border border-line bg-card text-ink-muted active:scale-95"
+                                className="flex h-14 w-11 shrink-0 items-center justify-center rounded-xl border border-line bg-card text-ink-muted active:scale-95"
                                 aria-label="Diminuir 2,5 kg"
                               >
                                 <Minus className="h-4 w-4" aria-hidden />
@@ -550,32 +550,33 @@ export function WorkoutRunner({ session, exercises, defaultRestSeconds, soundEna
                                 inputMode="decimal"
                                 value={s.load}
                                 onChange={(e) => patchSet(ex.id, s.id, { load: e.target.value.replace(/[^\d.,]/g, "").slice(0, 7) })}
-                                className="field h-14 min-w-0 px-1 text-center text-xl font-semibold"
+                                className="field h-14 min-w-0 flex-1 px-1 text-center text-xl font-semibold"
                                 aria-label={`Carga da série ${s.setNumber} em kg`}
                               />
                               <button
                                 type="button"
                                 onClick={() => patchSet(ex.id, s.id, { load: stepLoad(s.load, 2.5) })}
-                                className="flex h-14 w-9 shrink-0 items-center justify-center rounded-xl border border-line bg-card text-ink-muted active:scale-95"
+                                className="flex h-14 w-11 shrink-0 items-center justify-center rounded-xl border border-line bg-card text-ink-muted active:scale-95"
                                 aria-label="Aumentar 2,5 kg"
                               >
                                 <Plus className="h-4 w-4" aria-hidden />
                               </button>
                             </div>
                           </div>
-                          <button
-                            type="button"
-                            onClick={() => toggleComplete(ex, s)}
-                            className={cn(
-                              "flex h-14 w-14 items-center justify-center rounded-xl border-2 transition active:scale-95",
-                              s.completed ? "border-success bg-success text-bg" : "border-brand text-brand hover:bg-brand/10",
-                            )}
-                            aria-pressed={s.completed}
-                            aria-label={s.completed ? `Desmarcar série ${s.setNumber}` : `Concluir série ${s.setNumber}`}
-                          >
-                            <Check className="h-7 w-7" aria-hidden />
-                          </button>
                         </div>
+                        <button
+                          type="button"
+                          onClick={() => toggleComplete(ex, s)}
+                          className={cn(
+                            "mt-3 flex h-12 w-full items-center justify-center gap-2 rounded-xl border-2 text-sm font-semibold transition active:scale-[0.98]",
+                            s.completed ? "border-success bg-success text-bg" : "border-brand text-brand hover:bg-brand/10",
+                          )}
+                          aria-pressed={s.completed}
+                          aria-label={s.completed ? `Desmarcar série ${s.setNumber}` : `Concluir série ${s.setNumber}`}
+                        >
+                          <Check className="h-6 w-6" aria-hidden /> {s.completed ? "Concluída" : "Concluir série"}
+                        </button>
+                        
                         {hint?.setId === s.id ? <p role="alert" className="mt-2 text-xs text-warn">{hint.text}</p> : null}
                       </li>
                     ))}

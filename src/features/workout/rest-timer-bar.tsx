@@ -53,7 +53,7 @@ export function RestTimerBar({ state, onChange, onStart, onPause, onResume, onRe
       role="timer"
       aria-live="off"
       className={cn(
-        "fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-30 mx-auto max-w-md px-3 pb-2",
+        "fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-30 mx-auto max-w-md px-3 pb-1.5",
       )}
     >
       <div
@@ -68,13 +68,13 @@ export function RestTimerBar({ state, onChange, onStart, onPause, onResume, onRe
           </div>
         ) : null}
 
-        <div className="flex items-center gap-2 p-3">
+        <div className="flex items-center gap-1.5 px-3 py-2">
           <div className="min-w-0 flex-1">
             <p className="text-[10px] font-semibold uppercase tracking-wider text-ink-muted">
               {finished ? "Descanso concluído" : state.status === "paused" ? "Descanso pausado" : "Descanso"}
             </p>
             <p
-              className={cn("font-display text-3xl font-bold tabular-nums", finished ? "text-brand" : "text-ink")}
+              className={cn("font-display text-2xl font-bold leading-tight tabular-nums", finished ? "text-brand" : "text-ink")}
               aria-label={`Tempo de descanso ${formatClock(remaining)}`}
             >
               {finished ? "Bora!" : formatClock(remaining)}
@@ -83,42 +83,42 @@ export function RestTimerBar({ state, onChange, onStart, onPause, onResume, onRe
 
           {state.status === "idle" || state.status === "finished" ? (
             <>
-              <Button variant="ghost" size="sm" className="h-11 w-11 px-0" onClick={() => onAdjust(-15)} aria-label="Menos 15 segundos">
+              <Button variant="ghost" size="sm" className="h-10 w-10 px-0" onClick={() => onAdjust(-15)} aria-label="Menos 15 segundos">
                 <Minus className="h-5 w-5" aria-hidden />
               </Button>
-              <Button variant="ghost" size="sm" className="h-11 w-11 px-0" onClick={() => onAdjust(15)} aria-label="Mais 15 segundos">
+              <Button variant="ghost" size="sm" className="h-10 w-10 px-0" onClick={() => onAdjust(15)} aria-label="Mais 15 segundos">
                 <Plus className="h-5 w-5" aria-hidden />
               </Button>
-              <Button size="md" className="h-12 px-4" onClick={onStart}>
+              <Button size="md" className="h-11 px-3" onClick={onStart}>
                 <Play className="h-5 w-5" aria-hidden /> {finished ? "Outro" : "Iniciar"}
               </Button>
               {finished ? (
-                <Button variant="ghost" size="sm" className="h-11 w-11 px-0" onClick={onDismiss} aria-label="Fechar aviso">
+                <Button variant="ghost" size="sm" className="h-10 w-10 px-0" onClick={onDismiss} aria-label="Fechar aviso">
                   <X className="h-5 w-5" aria-hidden />
                 </Button>
               ) : null}
             </>
           ) : (
             <>
-              <Button variant="ghost" size="sm" className="h-11 w-11 px-0" onClick={() => onAdjust(-15)} aria-label="Menos 15 segundos">
+              <Button variant="ghost" size="sm" className="h-10 w-10 px-0" onClick={() => onAdjust(-15)} aria-label="Menos 15 segundos">
                 <Minus className="h-5 w-5" aria-hidden />
               </Button>
-              <Button variant="ghost" size="sm" className="h-11 w-11 px-0" onClick={() => onAdjust(15)} aria-label="Mais 15 segundos">
+              <Button variant="ghost" size="sm" className="h-10 w-10 px-0" onClick={() => onAdjust(15)} aria-label="Mais 15 segundos">
                 <Plus className="h-5 w-5" aria-hidden />
               </Button>
-              <Button variant="secondary" size="sm" className="h-11 w-11 px-0" onClick={onRestart} aria-label="Reiniciar descanso">
+              <Button variant="secondary" size="sm" className="h-10 w-10 px-0" onClick={onRestart} aria-label="Reiniciar descanso">
                 <RotateCcw className="h-5 w-5" aria-hidden />
               </Button>
               {state.status === "running" ? (
-                <Button size="md" className="h-12 px-4" onClick={onPause}>
+                <Button size="md" className="h-11 px-3" onClick={onPause}>
                   <Pause className="h-5 w-5" aria-hidden /> Pausar
                 </Button>
               ) : (
-                <Button size="md" className="h-12 px-4" onClick={onResume}>
+                <Button size="md" className="h-11 px-3" onClick={onResume}>
                   <Play className="h-5 w-5" aria-hidden /> Retomar
                 </Button>
               )}
-              <Button variant="ghost" size="sm" className="h-11 w-11 px-0" onClick={onDismiss} aria-label="Encerrar descanso">
+              <Button variant="ghost" size="sm" className="h-10 w-10 px-0" onClick={onDismiss} aria-label="Encerrar descanso">
                 <X className="h-5 w-5" aria-hidden />
               </Button>
             </>
