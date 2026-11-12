@@ -12,7 +12,7 @@ com isolamento total de dados.
 |---|---|---|
 | 1 | Fundação: auth, perfis, casal/convite, RLS, layout e identidade visual | **Concluída** |
 | 2 | Biblioteca de exercícios e planejamento | **Concluída** |
-| 3 | Treino individual | Pendente |
+| 3 | Treino individual | **Concluída** |
 | 4 | Treinar Juntos (Realtime) | Pendente |
 | 5 | Evolução e estatísticas | Pendente |
 | 6 | Notificações | Pendente |
@@ -38,10 +38,20 @@ com isolamento total de dados.
   descanso, técnica especial, objetivo, observações, reordenar)
 - O administrador do casal cria e edita os planos da parceira, sem acesso aos dados privados dela
 
+### O que a Fase 3 entrega
+
+- **Iniciar treino** a partir de qualquer dia de um plano; os exercícios viram uma "foto" da sessão (editar o plano depois não altera o histórico)
+- Tela de treino pensada para a academia: séries com botões grandes, repetições, carga com +/- de 2,5 kg, concluir série, adicionar/remover série extra, pular e retomar exercício
+- **Cronômetro de descanso**: inicia sozinho ao concluir a série (com o descanso do exercício), pausar, retomar, reiniciar e ajustar ±15 s; aviso sonoro e vibração só se você ativar em Configurações
+- **Salvamento automático**: cada série é salva no servidor na hora. Sem internet, a alteração fica guardada no aparelho e é reenviada quando a conexão volta, sem duplicar
+- **Retomada**: fechou o navegador ou atualizou a página? Um aviso "Treino em andamento" leva de volta de onde parou
+- **Histórico individual** com duração, séries e volume por treino; carga sugerida vem sempre do seu próprio histórico
+- Preferências de descanso padrão e som em Configurações
+
 ## Tecnologias
 
 Next.js 15 (App Router) · React 19 · TypeScript strict · Tailwind CSS 3 · Lucide · Supabase (Postgres,
-Auth, Storage, RLS) · Zod · Vitest + PGlite.
+Auth, Storage, RLS) · Zod · Vitest + PGlite + Testing Library.
 
 ## Requisitos
 

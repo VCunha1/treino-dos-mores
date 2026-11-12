@@ -1,8 +1,10 @@
 import Link from "next/link";
-import { Bot, ClipboardList, Dumbbell, HeartPulse, Users } from "lucide-react";
+import { Bot, ClipboardList, HeartPulse, Users } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { getCoupleContext, getProfile } from "@/services/session";
+import { ActiveSessionBanner } from "@/features/workout/active-session-banner";
+import { getActiveSession } from "@/services/workouts";
 
 export const metadata = { title: "Início" };
 
@@ -13,14 +15,13 @@ function greeting(hour: number) {
 }
 
 const upcoming = [
-  { icon: Dumbbell, title: "Treino em andamento", phase: "Fase 3" },
   { icon: Users, title: "Treinar juntos", phase: "Fase 4" },
   { icon: Bot, title: "AI Coach", phase: "Fase 7" },
   { icon: HeartPulse, title: "Cycle Sync", phase: "Fase 8" },
 ];
 
 export default async function DashboardPage() {
-  const [profile, couple] = await Promise.all([getProfile(), getCoupleContext()]);
+  const [profile, couple, active] = await Promise.all([getProfile(), getCoupleContext(), getActiveSession()]);
 
   const now = new Date();
   const hour = Number(new Intl.DateTimeFormat("pt-BR", { hour: "numeric", hour12: false, timeZone: "America/Sao_Paulo" }).format(now));
@@ -43,6 +44,8 @@ export default async function DashboardPage() {
           </h1>
         </div>
       </header>
+
+      <ActiveSessionBanner session={active} />
 
       {!couple ? (
         <Card className="border-brand/40">

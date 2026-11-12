@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowDown, ArrowUp, Plus } from "lucide-react";
+import { ArrowDown, ArrowUp, Play, Plus } from "lucide-react";
 import { ActionForm } from "@/components/ui/action-form";
 import { ConfirmButton } from "@/components/ui/confirm-button";
 import { FormField } from "@/components/ui/form-field";
@@ -12,6 +12,7 @@ import {
   updateDay,
   updatePlanExercise,
 } from "@/features/plans/actions";
+import { startSession } from "@/features/workout/actions";
 import { formatRest, muscleLabel, WEEKDAYS, weekdayLabel } from "@/lib/training";
 import type { PlanDay, PlanExercise } from "@/types/training";
 
@@ -231,6 +232,18 @@ export function PlanDayCard({
           ))}
         </ul>
       )}
+
+      {day.exercises.length > 0 ? (
+        <ActionForm
+          action={startSession}
+          fields={{ planId, dayId: day.id }}
+          variant="primary"
+          size="lg"
+          className="mt-3 w-full"
+        >
+          <Play className="h-5 w-5" aria-hidden /> Iniciar treino
+        </ActionForm>
+      ) : null}
 
       {canManage ? (
         <Link

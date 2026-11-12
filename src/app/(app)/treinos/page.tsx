@@ -4,6 +4,8 @@ import { PageAlert } from "@/components/ui/page-alert";
 import { splitLabel } from "@/lib/training";
 import { getCoupleContext, requireUser } from "@/services/session";
 import { listPlans } from "@/services/plans";
+import { ActiveSessionBanner } from "@/features/workout/active-session-banner";
+import { getActiveSession } from "@/services/workouts";
 import type { WorkoutPlan } from "@/types/training";
 
 export const metadata = { title: "Meus treinos" };
@@ -44,7 +46,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 export default async function PlansPage({ searchParams }: { searchParams: Promise<{ erro?: string }> }) {
   const { erro } = await searchParams;
-  const [user, ctx, plans] = await Promise.all([requireUser(), getCoupleContext(), listPlans()]);
+  const [user, ctx, plans, activeSession] = await Promise.all([requireUser(), getCoupleContext(), listPlans(), getActiveSession()]);
 
   const mine = plans.filter((p) => p.owner_id === user.id);
   const others = plans.filter((p) => p.owner_id !== user.id);
@@ -66,6 +68,14 @@ export default async function PlansPage({ searchParams }: { searchParams: Promis
       </header>
 
       <PageAlert error={erro} />
+      <ActiveSessionBanner session={activeSession} />
+
+      <Link
+        href="/historico"
+        className="flex h-12 items-center justify-center rounded-xl border border-line text-sm font-semibold text-ink-muted transition hover:text-ink"
+      >
+        Ver histórico de treinos
+      </Link>
 
       <Section title="Meus planos">
         {active.length === 0 ? (

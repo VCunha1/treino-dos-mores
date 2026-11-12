@@ -64,6 +64,34 @@ Regras:
 - **Gerenciar o treino da parceira não concede acesso a `profile_details`, preferências, saúde ou Cycle Sync.**
   Essas tabelas não usam `manages_user()` e seguem privadas (há teste cobrindo isso).
 
+## Treino individual (Fase 3)
+
+Fonte: `supabase/migrations/20261110000005_workout_sessions.sql`. Testes: `tests/sessions.test.ts`.
+
+| Tabela | Dono (quem treinou) | Parceiro(a) / admin do casal | Estranho / outro casal |
+|---|---|---|---|
+| `workout_sessions` | lê, apaga, edita só `notes` | **nada** | nada |
+| `workout_session_exercises` | lê; edita `status`/`notes` só durante o treino | **nada** | nada |
+| `workout_sets` | lê; cria, edita e apaga só durante o treino | **nada** | nada |
+
+Regras:
+
+- A sessão nasce só por `start_workout_session` e termina só por `finish_workout_session`. Não há `INSERT` direto,
+  e o cliente não escolhe o dono: é sempre `auth.uid()`. Se o admin treina um plano da parceira, a sessão é do admin.
+- Só se inicia treino de um dia de plano que o usuário **pode ver** (`can_view_day`).
+- No máximo **uma sessão em andamento por usuário** (índice único parcial). É isso que sustenta a retomada.
+- **Sessão finalizada é imutável**: as políticas só permitem alterar séries e exercícios enquanto a sessão está
+  `in_progress`. Colunas como `status`, `total_volume_kg` e `completed_at` não são atualizáveis pelo cliente.
+- O volume é calculado **no banco** ao finalizar (soma de reps × carga das séries concluídas). Finalizar sem nenhuma série concluída é recusado.
+- **Carga sugerida**: a última série concluída do **próprio usuário** naquele exercício, em sessões finalizadas.
+  Nunca usa dados de outra pessoa; sem histórico, usa a carga inicial do plano.
+- Salvar série é **idempotente** (`update` por id, `unique(session_exercise_id, set_number)`): reenviar após queda de
+  conexão não duplica registros. A hora de conclusão não muda ao reenviar.
+- O histórico guarda o nome do plano e dos exercícios (snapshot). Apagar um exercício personalizado ou editar o plano
+  não apaga nem altera treinos já feitos (`on delete set null`).
+- Treino em andamento pode ser **descartado**; treino finalizado pode ser **excluído** do histórico pelo dono.
+- Compartilhar atividade com o parceiro (Fases 4 e 6) será feito por eventos resumidos, nunca abrindo estas tabelas.
+
 ## Decisões de segurança tomadas
 
 - **Aleatoriedade do convite** vem de `gen_random_uuid()` (nativo). Evitei `pgcrypto` porque no
@@ -75,6 +103,9 @@ Regras:
 - **Plano compartilhado é somente leitura.** O admin sempre enxerga e gerencia os planos da parceira; só o plano do admin precisa ser marcado como compartilhado para a parceira vê-lo.
 - **Dados de saúde/Cycle Sync (Fase 8)** não existem ainda. Quando forem criados, devem seguir o mesmo
   padrão de `profile_details`: privados por padrão, com compartilhamento por categoria validado no banco.
+
+- **Fila offline no navegador** (`localStorage`): guarda só reps, carga e se a série foi concluída, por id de série, e é
+  apagada quando o servidor confirma. Se o navegador bloquear o armazenamento, o app continua salvando no servidor.
 
 ## O que ainda não está coberto
 
