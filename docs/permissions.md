@@ -92,6 +92,31 @@ Regras:
 - Treino em andamento pode ser **descartado**; treino finalizado pode ser **excluído** do histórico pelo dono.
 - Compartilhar atividade com o parceiro (Fases 4 e 6) será feito por eventos resumidos, nunca abrindo estas tabelas.
 
+## Treinar juntos (Fase 4)
+
+Fonte: `supabase/migrations/20261112000006_joint_workouts.sql`. Testes: `tests/joint.test.ts`, `tests/joint-live-card.test.tsx`.
+
+| Tabela | Membros do casal | Estranho / outro casal | Anônimo |
+|---|---|---|---|
+| `joint_sessions` | **lê** | nada | nada |
+| `joint_participants` (resumo de progresso) | **lê** | nada | nada |
+| `workout_sessions` / `workout_sets` do parceiro | **nada** (seguem privadas) | nada | nada |
+
+Regras:
+
+- **Ninguém escreve direto** nas tabelas do encontro (só `SELECT` concedido). Tudo passa por `start_joint_session`, `join_joint_session`,
+  `cancel_joint_session` e `leave_joint_session`; o progresso é mantido por triggers, então ninguém forja o progresso do outro.
+- O parceiro enxerga apenas o **resumo** (séries feitas/total, exercício atual, volume, status). O Realtime transmite essa tabela, nunca `workout_sets`.
+- No máximo **um encontro aberto por casal** (índice único parcial). Só quem é do casal pode entrar/cancelar; entrar exige escolher um dia que a pessoa **pode ver**.
+- Não dá para entrar no próprio convite, em convite já ativo/cancelado, nem de outro casal.
+- Sair, descartar ou finalizar o treino encerra a participação; o encontro fecha quando ninguém mais está treinando (`completed` se alguém finalizou, senão `cancelled`).
+- Sair do casal encerra o encontro aberto; os treinos individuais continuam.
+- A sessão de quem entra é sempre dele (`auth.uid()`); a carga sugerida continua vindo só do histórico próprio.
+- **Hardening**: `EXECUTE` revogado de `public`/`anon` em todas as funções do schema `public` (e nos defaults futuros). Funções internas
+  (`create_session_from_day`, `refresh_joint_progress`, `settle_joint`, triggers) não são chamáveis pelo cliente. Há teste que falha se alguma função voltar a ser executável por `anon`.
+- Realtime: as tabelas entram na publicação `supabase_realtime` pela migration; o Realtime respeita a RLS, então cada pessoa só recebe eventos do próprio casal.
+- Se o casal for apagado, o histórico de encontros some junto (os treinos individuais ficam).
+
 ## Decisões de segurança tomadas
 
 - **Aleatoriedade do convite** vem de `gen_random_uuid()` (nativo). Evitei `pgcrypto` porque no

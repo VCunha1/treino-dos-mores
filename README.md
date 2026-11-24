@@ -13,7 +13,7 @@ com isolamento total de dados.
 | 1 | Fundação: auth, perfis, casal/convite, RLS, layout e identidade visual | **Concluída** |
 | 2 | Biblioteca de exercícios e planejamento | **Concluída** |
 | 3 | Treino individual | **Concluída** |
-| 4 | Treinar Juntos (Realtime) | Pendente |
+| 4 | Treinar Juntos (Realtime) | **Concluída** |
 | 5 | Evolução e estatísticas | Pendente |
 | 6 | Notificações | Pendente |
 | 7 | AI Coach | Pendente |
@@ -47,6 +47,15 @@ com isolamento total de dados.
 - **Retomada**: fechou o navegador ou atualizou a página? Um aviso "Treino em andamento" leva de volta de onde parou
 - **Histórico individual** com duração, séries e volume por treino; carga sugerida vem sempre do seu próprio histórico
 - Preferências de descanso padrão e som em Configurações
+
+### O que a Fase 4 entrega
+
+- **Treinar juntos**: um chama o outro escolhendo o próprio treino; o outro aceita escolhendo o dele. Cada pessoa treina o seu plano, com as suas cargas
+- **Progresso ao vivo (Supabase Realtime)**: durante o treino, um cartão fixo mostra o(a) parceiro(a): exercício atual, séries feitas e quanto falta. Se a conexão cair, o app relê o estado sozinho (a cada 15 s e ao voltar para a aba)
+- Convite com resposta: aceitar, recusar ("Agora não") ou cancelar; sair do encontro a qualquer momento sem perder o treino individual
+- O encontro termina sozinho quando todos finalizam, saem ou descartam o treino; o histórico mostra o resumo dos dois
+- Privacidade mantida: o(a) parceiro(a) vê só um **resumo** (séries, exercício atual, volume). Cargas, repetições e treinos continuam privados
+- Endurecimento: funções do banco deixam de ser executáveis por usuários não logados
 
 ## Tecnologias
 

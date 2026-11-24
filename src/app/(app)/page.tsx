@@ -5,6 +5,7 @@ import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { getCoupleContext, getProfile } from "@/services/session";
 import { ActiveSessionBanner } from "@/features/workout/active-session-banner";
 import { getActiveSession } from "@/services/workouts";
+import { getOpenJoint } from "@/services/joint";
 
 export const metadata = { title: "Início" };
 
@@ -15,13 +16,14 @@ function greeting(hour: number) {
 }
 
 const upcoming = [
-  { icon: Users, title: "Treinar juntos", phase: "Fase 4" },
   { icon: Bot, title: "AI Coach", phase: "Fase 7" },
   { icon: HeartPulse, title: "Cycle Sync", phase: "Fase 8" },
 ];
 
 export default async function DashboardPage() {
   const [profile, couple, active] = await Promise.all([getProfile(), getCoupleContext(), getActiveSession()]);
+  const joint = couple?.partner ? await getOpenJoint() : null;
+  const invitedByPartner = joint?.joint.status === "waiting" && joint.joint.created_by === couple?.partner?.id;
 
   const now = new Date();
   const hour = Number(new Intl.DateTimeFormat("pt-BR", { hour: "numeric", hour12: false, timeZone: "America/Sao_Paulo" }).format(now));
@@ -82,6 +84,35 @@ export default async function DashboardPage() {
       >
         <ClipboardList className="h-6 w-6" aria-hidden /> Meus treinos
       </Link>
+
+      {couple?.partner ? (
+        <Link
+          href="/juntos"
+          className={
+            invitedByPartner
+              ? "flex items-center gap-3 rounded-2xl border border-brand bg-brand/10 p-4 transition active:scale-[0.98]"
+              : "flex items-center gap-3 rounded-2xl border border-line/70 bg-card p-4 transition active:scale-[0.98]"
+          }
+        >
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand/10 text-brand">
+            <Users className="h-6 w-6" aria-hidden />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block font-semibold">
+              {invitedByPartner ? `${couple.partner.display_name} chamou você para treinar!` : "Treinar juntos"}
+            </span>
+            <span className="block text-sm text-ink-muted">
+              {invitedByPartner
+                ? "Toque para entrar"
+                : joint?.joint.status === "active"
+                  ? "Treino em conjunto em andamento"
+                  : joint
+                    ? "Convite enviado, aguardando"
+                    : `Chame ${couple.partner.display_name} e acompanhem o progresso ao vivo`}
+            </span>
+          </span>
+        </Link>
+      ) : null}
 
       <section aria-labelledby="soon" className="space-y-3">
         <h2 id="soon" className="text-xs font-semibold uppercase tracking-wider text-ink-muted">
